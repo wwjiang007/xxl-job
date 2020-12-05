@@ -85,6 +85,8 @@ XXL-JOB是一个分布式任务调度平台，其核心设计目标是开发迅�
 
 于2019-12-10，XXL-JOB参与"[2019年度最受欢迎中国开源软件](https://www.oschina.net/project/top_cn_2019)"评比，在当时已录入的一万多个开源项目中角逐，最终排名"开发框架和基础组件类"第9名。
 
+于2020-11-16，XXL-JOB参与"[2020年度最受欢迎中国开源软件](https://www.oschina.net/project/top_cn_2020)"评比，在当时已录入的一万多个开源项目中角逐，最终排名"开发框架和基础组件类"第8名。
+
 > 我司大众点评目前已接入XXL-JOB，内部别名《Ferrari》（Ferrari基于XXL-JOB的V1.1版本定制而成，新接入应用推荐升级最新版本）。
 据最新统计, 自2016-01-21接入至2017-12-01期间，该系统已调度约100万次，表现优异。新接入应用推荐使用最新版本，因为经过数十个版本的更新，系统的任务模型、UI交互模型以及底层调度通讯模型都有了较大的优化和提升，核心功能更加稳定高效。
 
@@ -557,7 +559,6 @@ XXL-JOB是一个分布式任务调度平台，其核心设计目标是开发迅�
     xxl-job-core：公共依赖
     xxl-job-executor-samples：执行器Sample示例（选择合适的版本执行器，可直接使用，也可以参考其并将现有项目改造成执行器）
         ：xxl-job-executor-sample-springboot：Springboot版本，通过Springboot管理执行器，推荐这种方式；
-        ：xxl-job-executor-sample-spring：Spring版本，通过Spring容器管理执行器，比较通用；
         ：xxl-job-executor-sample-frameless：无框架版本；
         
 
@@ -712,7 +713,7 @@ public XxlJobSpringExecutor xxlJobExecutor() {
 如果已经正确进行上述配置，可将执行器项目编译打部署，系统提供多种执行器Sample示例项目，选择其中一个即可，各自的部署方式如下。
 
     xxl-job-executor-sample-springboot：项目编译打包成springboot类型的可执行JAR包，命令启动即可；
-    xxl-job-executor-sample-spring：项目编译打包成WAR包，并部署到tomcat中。
+    xxl-job-executor-sample-frameless：项目编译打包成JAR包，命令启动即可；
     
 
 至此“执行器”项目已经部署结束。
@@ -2064,7 +2065,14 @@ data: post-data
 - 3、【新增】新增任务辅助工具 "XxlJobHelper"：提供统一任务辅助能力，包括：任务上下文信息维护获取（任务参数、任务ID、分片参数）、日志输出、任务结果设置……等；
     - 3.1、"ShardingUtil" 组件废弃：改用 "XxlJobHelper.getShardIndex()/getShardTotal();" 获取分片参数；
     - 3.2、"XxlJobLogger" 组件废弃：改用 "XxlJobHelper.log" 进行日志输出；
-- 4、【优化】任务核心类 "IJobHandler" 的 "execute" 方法取消出入参设计。改为通过 "XxlJobHelper.getJobParam" 获取任务参数并替代方法入参，通过 "XxlJobHelper.handleSuccess/handleFail" 设置任务结果并替代方法出参； 
+- 4、【优化】任务核心类 "IJobHandler" 的 "execute" 方法取消出入参设计。改为通过 "XxlJobHelper.getJobParam" 获取任务参数并替代方法入参，通过 "XxlJobHelper.handleSuccess/handleFail" 设置任务结果并替代方法出参，示例代码如下；
+```
+@XxlJob("demoJobHandler")
+public void execute() {
+  String param = XxlJobHelper.getJobParam();    // 获取参数
+  XxlJobHelper.handleSuccess();                 // 设置任务结果
+}
+``` 
 - 4、【优化】Cron编辑器增强：Cron编辑器修改cron时可实时查看最近运行时间;
 - 5、【优化】执行器示例项目规范整理；
 - 6、【优化】任务调度生命周期重构：调度（schedule）、触发(trigger)、执行（handle）、回调(callback)、结束（complete）；
